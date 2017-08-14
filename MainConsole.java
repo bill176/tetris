@@ -15,6 +15,7 @@ public class MainConsole{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setResizable(false);
+	frame.setLocationRelativeTo(null);
 
         canvas = new Canvas();
         frame.addKeyListener(canvas.getKeyListener());
@@ -25,6 +26,13 @@ public class MainConsole{
         SwingUtilities.invokeLater(new Runnable(){
             @Override
             public void run(){
+		JOptionPane.showMessageDialog(null, 	"Press [up] key to rotate the blocks\n" + 
+							"Press [down] key to move the blocks down\n" + 
+							"Press [left] key to move the blocks to the left\n" +
+							"Press [right] key to move the blocks to the right\n" +
+							"Press [space] key to move the blocks all the way down\n" + 
+							"Press [P] key to pause the game\n" +
+							"Press [R] key to resume the game\n");
                 new MainConsole();
             }
         });
