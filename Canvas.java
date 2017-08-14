@@ -70,23 +70,24 @@ public class Canvas extends JPanel{
     private KeyListener theKeyListener;
     private Timer timer;
     private int score;
+    private boolean gameActive;
 
     public Canvas(){
 	score = 0;
+	gameActive = true;
         plane = new int[WIDTH][HEIGHT];
-        for(int i = 0; i < WIDTH; i++){
-            for(int j = 0; j < HEIGHT; j++){
+        for(int i = 0; i < WIDTH; i++)
+            for(int j = 0; j < HEIGHT; j++)
                 if(i == 0 || i == WIDTH - 1 || j == HEIGHT - 1)
                     plane[i][j] = -2;
                 else 
                     plane[i][j] = -1;
-            }
-        }
 
         ActionListener theActionListener = new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                moveDown();
+		if(gameActive)
+	                moveDown();
             }
         };
 
@@ -100,23 +101,34 @@ public class Canvas extends JPanel{
         theKeyListener = new KeyListener(){
             public void keyTyped(KeyEvent e){}
             public void keyReleased(KeyEvent e){}
+	    @Override
             public void keyPressed(KeyEvent e){
                 switch(e.getKeyCode()){
                     case KeyEvent.VK_UP:
-                        rotate();
+                        if(gameActive)
+				rotate();
                         break;
                     case KeyEvent.VK_DOWN:
-                        moveDown();
+                        if(gameActive)
+                        	moveDown();
                         break;
                     case KeyEvent.VK_LEFT:
-                        moveLeft();
+                        if(gameActive)
+                       		moveLeft();
                         break;
                     case KeyEvent.VK_RIGHT:
-                        moveRight();
+                        if(gameActive)
+                        	moveRight();
                         break;
                     case KeyEvent.VK_SPACE:
-                        moveButtom();
+                        if(gameActive)
+                        	moveButtom();
                         break;
+		    case KeyEvent.VK_P:
+		    	gameActive = false;
+			break;
+		    case KeyEvent.VK_R:
+		    	gameActive = true;
                 }
             }
         };
@@ -130,13 +142,12 @@ public class Canvas extends JPanel{
 
         currentCoordinate = new Coordinates(6,0);
 
-        for(Coordinates c : shapes[currentShape][currentRotation].getCoordinates()){
+        for(Coordinates c : shapes[currentShape][currentRotation].getCoordinates())
             if(plane[currentCoordinate.getX() + c.getX()][currentCoordinate.getY() + c.getY()] != -1){
-                timer.stop();
+       		gameActive = false;
                 JOptionPane.showMessageDialog(null, "Game Over!");
                 break;
             }
-        }
         repaint();
     }
 
@@ -148,46 +159,35 @@ public class Canvas extends JPanel{
     }
 
     private boolean canMove(Coordinates coordinate, int shape, int rotation){
-
         for(Coordinates c : shapes[shape][rotation].getCoordinates())
             if(coordinate.getX() + c.getX() >= WIDTH || coordinate.getX() + c.getX() <= 0 
                 || coordinate.getY() + c.getY() >= HEIGHT - 1 || coordinate.getY() + c.getY() < 0
                 || plane[coordinate.getX() + c.getX()][coordinate.getY() + c.getY()] != -1)
                     return false;
-
         return true;
     }
 
     private boolean rotate(){
-        
-        //check if can be rotated and then rotate
         if(canMove(currentCoordinate, currentShape, (currentRotation + 1) % 4)){
             currentRotation = (currentRotation + 1) % 4;
             repaint();
             return true;
         }
-
         return false;
-        
     }
 
     private boolean moveDown(){
-
-        //determining if the blocks can be moved further down
 	if(canMove(new Coordinates(currentCoordinate.getX(), currentCoordinate.getY() + 1), currentShape, currentRotation)){
         	currentCoordinate = new Coordinates(currentCoordinate.getX(), currentCoordinate.getY() + 1);
         	repaint();
 	        return true;
 	}
-		
 	resetShape();
-	while(isRowFilled())
-		clearRow();
+	clearRow();
 	return false;
     }
 
     private boolean moveLeft(){
-
         if(canMove(new Coordinates(currentCoordinate.getX() - 1, currentCoordinate.getY()), currentShape, currentRotation)){
             currentCoordinate = new Coordinates(currentCoordinate.getX() - 1, currentCoordinate.getY());
             repaint();
@@ -197,7 +197,6 @@ public class Canvas extends JPanel{
     }
 
     private boolean moveRight(){
-
         if(canMove(new Coordinates(currentCoordinate.getX() + 1, currentCoordinate.getY()), currentShape, currentRotation)){
             currentCoordinate = new Coordinates(currentCoordinate.getX() + 1, currentCoordinate.getY());
             repaint();
@@ -210,20 +209,26 @@ public class Canvas extends JPanel{
         while(moveDown());
     }
 
-    private boolean isRowFilled(){
+    private boolean isRowFilled(int y){
 	for(int x = 1; x < WIDTH - 1; x++)
-		if(plane[x][HEIGHT - 2] == -1)
+		if(plane[x][y] == -1)
 			return false;
 	return true;
     }
 
     private void clearRow(){
-    	for(int x = 1; x < WIDTH - 1; x++){
-		for(int y = HEIGHT - 2; y > 0; y--)
-			plane[x][y] = plane[x][y - 1];
-		plane[x][0] = -1;
+    	int i = HEIGHT - 2;
+	while(i > 0){
+		if(isRowFilled(i)){
+			for(int x = 1; x < WIDTH - 1; x++){
+				for(int y = i; y > 0; y--)
+					plane[x][y] = plane[x][y - 1];
+				plane[x][0] = -1;
+			}
+			score += 10;
+		}else
+			i--;
 	}
-	score += 10;
 	repaint();
     }
 
@@ -255,9 +260,9 @@ public class Canvas extends JPanel{
 	g.drawString("Score: " + String.valueOf(score), (WIDTH + 2) * SIDE_OF_SQUARE, 8 * SIDE_OF_SQUARE);
     }
 
-    private void paintSquare(Graphics g, Coordinates topLeftPoint, int colorCode){
+    private void paintSquare(Graphics g, Coordinates topLeftPoint, int color){
         
-        if(colorCode == -1)
+        if(color == -1)
             return;
         
         g.setColor(Color.BLACK);
@@ -266,9 +271,9 @@ public class Canvas extends JPanel{
             SIDE_OF_SQUARE, 
             SIDE_OF_SQUARE);
         
-        if(colorCode >= 0 && colorCode < NUM_OF_SHAPES)
-            g.setColor(shapes[colorCode][currentRotation].getColor());
-        else if(colorCode == -2)
+        if(color >= 0 && color < NUM_OF_SHAPES)
+            g.setColor(shapes[color][currentRotation].getColor());
+        else if(color == -2)
             g.setColor(Color.WHITE);
         
         g.fillRect(topLeftPoint.getX() * SIDE_OF_SQUARE, 
