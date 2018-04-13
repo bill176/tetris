@@ -1,11 +1,11 @@
 # tetris
 A tribute to the classic video game implemented using Java Swing Library
 
-##How to run this game?
+## How to run this game?
 1. Run "compile.sh" in terminal   
 2. Double click on the newly-created tetris.jar file 
 
-##Controls
+## Controls
 - [up] key to rotate the block
 - [down] key to accelerate the block downward
 - [left] key to move the block to the left
