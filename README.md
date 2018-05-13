@@ -2,7 +2,7 @@
 A tribute to the classic video game implemented with Java Swing Library
 
 ## How to run this game?
-1. Run "compile.sh" in terminal   
+1. Run "run.sh" in terminal   
 2. Double click on the newly-created tetris.jar file 
 
 ## Controls
