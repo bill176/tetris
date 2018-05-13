@@ -1,5 +1,5 @@
 # tetris
-A tribute to the classic video game implemented using Java Swing Library
+A tribute to the classic video game implemented with Java Swing Library
 
 ## How to run this game?
 1. Run "compile.sh" in terminal   
@@ -14,6 +14,8 @@ A tribute to the classic video game implemented using Java Swing Library
 - [p] key to pause the game
 - [r] key to resume the game
 
+
+##Screenshots
 
 ![Rules](screenshots/Rule.png)
 ![Game](screenshots/Game.png)
