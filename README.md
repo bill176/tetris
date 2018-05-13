@@ -15,7 +15,7 @@ A tribute to the classic video game implemented with Java Swing Library
 - [r] key to resume the game
 
 
-##Screenshots
+## Screenshots
 
 ![Rules](screenshots/Rule.png)
 ![Game](screenshots/Game.png)
