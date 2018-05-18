@@ -1,7 +1,7 @@
-# tetris
-A tribute to the classic video game implemented with Java Swing Library
+# Tetris
+A tribute to the classic video game implemented with Java Swing Library.
 
-## How to run this game?
+## Run the game
 1. Run "run.sh" in terminal   
 2. Double click on the newly-created tetris.jar file 
 
